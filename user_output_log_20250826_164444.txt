@@ -1,0 +1,1 @@
+('To reset your password, go to the login page and click \'Forgot Password\'. Follow the instructions sent to your email.\n\n--- \n**Summary of Agent\'s Actions:**\n* **Your Question:** "I need to reset my password."\n* **Interpreted as:** "How do I reset my password?"\n* **Retrieved Document:** "How do I reset my password?"',)
