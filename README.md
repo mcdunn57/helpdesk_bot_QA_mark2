@@ -1,4 +1,4 @@
-# tinker2
+# Helpdesk QA Bot
 
 This project is a helpdesk chatbot built with Python and powered by the Gemini API. It's designed to answer questions based on a predefined set of knowledge. Here's a breakdown of the key files and the overall logic:
 
