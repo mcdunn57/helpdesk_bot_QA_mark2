@@ -10,10 +10,6 @@ import pandas as pd
 import json
 from typing import TypedDict, Annotated, List
 from dotenv import load_dotenv
-import langchain_google_genai
-import langchain_core
-import langgraph
-import langchain_community
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_core.messages import AnyMessage, HumanMessage, AIMessage
 from langchain_core.documents import Document
@@ -47,11 +43,11 @@ except ValueError as e:
 
 # Initialize the LLM for LangChain (used by retriever) and a native Google model for direct calls
 # This uses the langchain wrapper, which we will bypass in the problematic step
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0)
-embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
+llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0)
+embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 
 # This is the native Google library model, which we will use for direct, robust calls.
-native_model = genai.GenerativeModel('gemini-2.5-flash')
+native_model = genai.GenerativeModel('gemini-1.5-flash')
 
 
 # --- 4. Create and Load Data for RAG ---
@@ -84,7 +80,6 @@ documents = [Document(page_content=f"Question: {row['Question']}\nAnswer: {row['
 vector_store = FAISS.from_documents(documents, embeddings)
 # NOTE: We will call the vector store directly to get scores, not using as_retriever()
 # retriever = vector_store.as_retriever(search_kwargs={"k": 1})
-
 
 
 # --- 5. Define the Graph State ---

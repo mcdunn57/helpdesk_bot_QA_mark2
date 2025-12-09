@@ -77,14 +77,34 @@ native_model = genai.GenerativeModel('gemini-2.5-flash')
 # print("Created 'Helpdesk_bot_QA.csv' with sample data.")
 
 # Load the data from the CSV file
-df = pd.read_csv('Helpdesk_bot_QA.csv')
-documents = [Document(page_content=f"Question: {row['Question']}\nAnswer: {row['Answer']}") for index, row in df.iterrows()]
+#df = pd.read_csv('Helpdesk_bot_QA.csv')
+#documents = [Document(page_content=f"Question: {row['Question']}\nAnswer: {row['Answer']}") for index, row in df.iterrows()]
+# --- 5. Persist and Load Vector Store ---
+FAISS_INDEX_PATH = "faiss_index"
 
 # Create the FAISS vector store and a retriever that gets the single best result
-vector_store = FAISS.from_documents(documents, embeddings)
+#vector_store = FAISS.from_documents(documents, embeddings)
 # NOTE: We will call the vector store directly to get scores, not using as_retriever()
 # retriever = vector_store.as_retriever(search_kwargs={"k": 1})
+if os.path.exists(FAISS_INDEX_PATH):
+    print(f"Loading existing FAISS index from '{FAISS_INDEX_PATH}'...")
+    # The allow_dangerous_deserialization flag is needed for loading FAISS indexes.
+    vector_store = FAISS.load_local(
+        FAISS_INDEX_PATH, embeddings, allow_dangerous_deserialization=True
+    )
+    print("✅ FAISS index loaded.")
+else:
+    print("No existing FAISS index found. Creating a new one...")
+    # Load the data from the CSV file
+    df = pd.read_csv('Helpdesk_bot_QA.csv')
+    documents = [Document(page_content=f"Question: {row['Question']}\nAnswer: {row['Answer']}") for index, row in df.iterrows()]
 
+    # Create the FAISS vector store from the documents
+    vector_store = FAISS.from_documents(documents, embeddings)
+
+    # Save the vector store to disk for future use
+    vector_store.save_local(FAISS_INDEX_PATH)
+    print(f"✅ New FAISS index created and saved to '{FAISS_INDEX_PATH}'.")
 
 
 # --- 5. Define the Graph State ---
